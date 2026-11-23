@@ -1,0 +1,23 @@
+# Spell Splat banter: who <tab> moment <tab> line. Our own lines (PROMPT gets the job done, GLAZE charms).
+PROMPT	cast	On it.
+PROMPT	cast	Delivering.
+PROMPT	cast	Ticket closed.
+PROMPT	hit	Logged.
+PROMPT	hit	Noted. Retrying.
+PROMPT	land	Shipped!
+PROMPT	land	Right on spec.
+PROMPT	dodge	Not in scope.
+PROMPT	glazed	...I'll file a report.
+PROMPT	win	Done. Next task?
+PROMPT	pop	Merge conflict!
+GLAZE	cast	For you, darling.
+GLAZE	cast	A little sparkle?
+GLAZE	cast	Catch!
+GLAZE	hit	Rude. Gorgeous, but rude.
+GLAZE	hit	Ooh, that tingled.
+GLAZE	land	You're welcome!
+GLAZE	land	It suits you.
+GLAZE	dodge	Too slow, sweetie.
+GLAZE	glazed	I meant to do that.
+GLAZE	win	Applause is fine.
+GLAZE	pop	Our first duet!

@@ -126,6 +126,7 @@ check('charging ball grows in the hand', run(setup + 'put Emit.Fire("plasma ball
 check('fire ball sets the dummy alight', run(setup + 'put Emit.Fire("fire ball", "140,290", "500,300", "caster", empty, false) into tId\nput empty into tAll\nrepeat 60 times\nEmit.Step 1/30\nput Emit.Hits() after tAll\nend repeat\nreturn tAll'), lambda v: 'engulfed' in v)
 check('nothing hits its owner', run(setup + 'Emit.SetTarget "caster", 140, 290, 30, empty\nput Emit.Fire("photon burst", "140,290", "140,290", "caster", empty, false) into tId\nrepeat 5 times\nEmit.Step 1/30\nend repeat\nreturn Emit.Hits()'), lambda v: 'caster' not in v)
 
+check('shots meet in mid-air', run('Emit.Reset\nEmit.ClearTargets\nput Emit.Fire("photon bit", "100,300", "600,300", "PROMPT", empty, false) into tA\nput Emit.Fire("plasma ball", "600,300", "100,300", "GLAZE", empty, false) into tB\nput empty into tAll\nrepeat 40 times\nEmit.Step 1/60\nput Emit.Collide() into tC\nif tC is not empty then put Emit.Info(tA, "hit") & "," & Emit.Info(tB, "hit") & ";" after tAll\nend repeat\nreturn tAll'), 'mid-air,mid-air;')
 print(f'{count - len(fails)} of {count} passed')
 for f in fails:
     print('FAIL', f)

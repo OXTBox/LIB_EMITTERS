@@ -265,8 +265,36 @@ end Emit.Rays
 -- push other lines' points away from sources. A source line:
 --   x,y,strength,reach,wave(0..1),ringRadius(0 = a point),time
 function Emit.Displace pPoints, pSources
-   local tOut, tL, tS, tX, tY, tDX, tDY, tD, tDD, tF, tPX, tPY
+   local tOut, tL, tS, tX, tY, tDX, tDY, tD, tDD, tF, tPX, tPY, tN, k
+   local tSX, tSY, tST, tSR, tSW, tSRing, tSTime, tX0, tY0, tX1, tY1, tBX0, tBY0, tBX1, tBY1, tReach
    if pSources is empty then return pPoints
+   -- the sources once, as numbers, each with the box it can reach
+   put 0 into tN
+   put 999999 into tX0
+   put 999999 into tY0
+   put -999999 into tX1
+   put -999999 into tY1
+   repeat for each line tS in pSources
+      if tS is empty then next repeat
+      add 1 to tN
+      put item 1 of tS into tSX[tN]
+      put item 2 of tS into tSY[tN]
+      put item 3 of tS into tST[tN]
+      put item 4 of tS into tSR[tN]
+      put item 5 of tS into tSW[tN]
+      put item 6 of tS into tSRing[tN]
+      put item 7 of tS into tSTime[tN]
+      put tSR[tN] + max(0, tSRing[tN]) into tReach
+      put tSX[tN] - tReach into tBX0[tN]
+      put tSY[tN] - tReach into tBY0[tN]
+      put tSX[tN] + tReach into tBX1[tN]
+      put tSY[tN] + tReach into tBY1[tN]
+      put min(tX0, tBX0[tN]) into tX0
+      put min(tY0, tBY0[tN]) into tY0
+      put max(tX1, tBX1[tN]) into tX1
+      put max(tY1, tBY1[tN]) into tY1
+   end repeat
+   if tN = 0 then return pPoints
    repeat for each line tL in pPoints
       if tL is empty then
          put cr after tOut
@@ -274,23 +302,29 @@ function Emit.Displace pPoints, pSources
       end if
       put item 1 of tL into tX
       put item 2 of tL into tY
+      -- out of every source's reach: as it was
+      if tX < tX0 or tX > tX1 or tY < tY0 or tY > tY1 then
+         put tL & cr after tOut
+         next repeat
+      end if
       put 0 into tPX
       put 0 into tPY
-      repeat for each line tS in pSources
-         put tX - item 1 of tS into tDX
-         put tY - item 2 of tS into tDY
+      repeat with k = 1 to tN
+         if tX < tBX0[k] or tX > tBX1[k] or tY < tBY0[k] or tY > tBY1[k] then next repeat
+         put tX - tSX[k] into tDX
+         put tY - tSY[k] into tDY
          put sqrt(tDX * tDX + tDY * tDY) into tD
          if tD < 0.001 then next repeat
-         if item 6 of tS > 0 then
-            put abs(tD - item 6 of tS) into tDD
+         if tSRing[k] > 0 then
+            put abs(tD - tSRing[k]) into tDD
          else
             put tD into tDD
          end if
-         if tDD >= item 4 of tS then next repeat
-         put item 3 of tS * (1 - tDD / item 4 of tS) into tF
-         if item 5 of tS > 0 then
-            put tF * ((1 - item 5 of tS) + item 5 of tS * sin(tDD * 0.15 - item 7 of tS * 14)) into tF
-            add tF * 0.6 * sin(tX * 0.09 + item 7 of tS * 11) * item 5 of tS to tPY
+         if tDD >= tSR[k] then next repeat
+         put tST[k] * (1 - tDD / tSR[k]) into tF
+         if tSW[k] > 0 then
+            put tF * ((1 - tSW[k]) + tSW[k] * sin(tDD * 0.15 - tSTime[k] * 14)) into tF
+            add tF * 0.6 * sin(tX * 0.09 + tSTime[k] * 11) * tSW[k] to tPY
          end if
          add tDX / tD * tF to tPX
          add tDY / tD * tF to tPY
@@ -1166,6 +1200,46 @@ command Emit.SetTarget pName, pX, pY, pR, pBones
    put pX & comma & pY & comma & pR into sTargets[pName]
    put pBones into sBones[pName]
 end Emit.SetTarget
+
+command Emit.ClearTargets
+   put empty into sTargets
+   put empty into sBones
+end Emit.ClearTargets
+
+-- shots of different owners that touch in mid-air pop together (a food fight): each fires its
+-- onHit power where they met, or bursts into dots. Returns the meeting points, one x,y a line.
+function Emit.Collide
+   local tIds, tA, tB, tFA, tFB, tOut, tX, tY, tId, tOn
+   put empty into tOut
+   repeat for each key tA in sFx
+      if sFx[tA]["form"] is "bit" or sFx[tA]["form"] is "ball" then
+         if sFx[tA]["done"] is not true and sFx[tA]["charging"] is not true then put tA & cr after tIds
+      end if
+   end repeat
+   repeat for each line tA in tIds
+      repeat for each line tB in tIds
+         if tB <= tA then next repeat
+         if sFx[tA]["done"] is true or sFx[tB]["done"] is true then next repeat
+         if sFx[tA]["owner"] is sFx[tB]["owner"] then next repeat
+         if Emit.Dist(sFx[tA]["x"], sFx[tA]["y"], sFx[tB]["x"], sFx[tB]["y"]) > sFx[tA]["r"] + sFx[tB]["r"] + 4 then next repeat
+         put round((sFx[tA]["x"] + sFx[tB]["x"]) / 2) into tX
+         put round((sFx[tA]["y"] + sFx[tB]["y"]) / 2) into tY
+         put tX & comma & tY & cr after tOut
+         repeat for each item tId in tA & comma & tB
+            put "mid-air" into sFx[tId]["hit"]
+            put true into sFx[tId]["done"]
+            put empty into sFx[tId]["g"]
+            put sFx[tId]["p"]["onHit"] into tOn
+            if tOn is not empty and tOn is not "none" then
+               get Emit.Fire(tOn, tX & comma & tY, tX & comma & tY, sFx[tId]["owner"], empty, false, sFx[tId]["depth"] + 1)
+            else
+               emitBurstDots tId, tX, tY, max(20, sFx[tId]["p"]["burstDots"])
+            end if
+         end repeat
+      end repeat
+   end repeat
+   return tOut
+end Emit.Collide
 
 command Emit.RemoveTarget pName
    delete variable sTargets[pName]
@@ -2162,6 +2236,12 @@ command Draw.Begin pGroup
    put empty into sSlotStyled
    unlock screen
 end Draw.Begin
+
+-- the group the pool is in now (empty when there is none)
+function Draw.Group
+   if sG is not an array then return empty
+   return sGroup
+end Draw.Group
 
 command Draw.End
    local tSlot, tLayer, tG

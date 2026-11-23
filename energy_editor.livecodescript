@@ -57,8 +57,11 @@ on preOpenStack
       exit preOpenStack
    end if
    start using stack tLib
+   Ed.UseLib Ed.Projects() & "/LIB_POWERBAR/livecode/lib_powerbar.livecodescript"
+   Ed.UseLib Ed.Folder() & "/livecode/lib_duel.livecodescript"
    Ed.UseData
    Emit.LoadAll sUserFolder
+   Duel.Init Ed.Folder(), Ed.Projects() & "/LIB_POWERBAR"
    if sBuilt is not true then Ed.Build
    put true into sBuilt
    go card "Editor"
@@ -74,14 +77,28 @@ on closeStackRequest
 end closeStackRequest
 
 on openCard
-   if the short name of the target is "Editor" then
-      Ed.StartTick
-   end if
+   switch the short name of the target
+      case "Editor"
+         -- the effects pool comes back from the duel
+         if Draw.Group() is not "Stage" then
+            Emit.Clear
+            Emit.ClearTargets
+            Emit.SetStage kStageL, kStageT, kStageL + kStageW, kStageT + kStageH, sFloorY
+            Draw.Begin "Stage"
+            Ed.PlacePosts
+         end if
+         Ed.StartTick
+         break
+      case "Duel"
+         Duel.Open
+         Ed.StartTick
+         break
+   end switch
    pass openCard
 end openCard
 
 on closeCard
-   if the short name of the target is "Editor" then Ed.StopTick
+   if the short name of the target is "Duel" then Duel.Close
    pass closeCard
 end closeCard
 
@@ -94,6 +111,23 @@ function Ed.Folder
    set the itemDel to comma
    return tF
 end Ed.Folder
+
+-- the projects folder (the one LIB_EMITTERS is in)
+function Ed.Projects
+   local tF
+   put Ed.Folder() into tF
+   set the itemDel to "/"
+   delete the last item of tF
+   return tF
+end Ed.Projects
+
+command Ed.UseLib pPath
+   if there is a file pPath then
+      start using stack pPath
+   else
+      answer "Not found:" && pPath
+   end if
+end Ed.UseLib
 
 -- saves go to the Data folder through LIB_DATA when it is there (rule 12), else powers/user
 command Ed.UseData
@@ -277,7 +311,7 @@ command Ed.Build
    get Ed.Button("Btn_Delete", "Delete", "156,528,228,550")
    get Ed.Button("Btn_Rename", "Rename", "8,556,110,578")
    get Ed.Button("Btn_Save", "Save", "114,556,228,578")
-   put Ed.Make("field", "CmdLine", "8,604,228,626") into tF
+   put Ed.Make("field", "CmdLine", "8,612,228,634") into tF
    set the visible of tF to false
    set the toolTip of tF to "command line: type xTalk, press Return (backquote hides it)"
    -- the stage
@@ -289,6 +323,7 @@ command Ed.Build
    get Ed.Button("Btn_Step", "STEP (.)", (kStageL + 184) & comma & tC & comma & (kStageL + 250) & comma & (tC + 22))
    get Ed.Button("Btn_Clear", "CLEAR", (kStageL + 254) & comma & tC & comma & (kStageL + 314) & comma & (tC + 22))
    get Ed.Button("Btn_Dummy", "DUMMY: stand", (kStageL + 318) & comma & tC & comma & (kStageL + 420) & comma & (tC + 22))
+   get Ed.Button("Btn_Duel", "DUEL: PROMPT vs GLAZE  >", "8,584,228,606")
    get Ed.Label("SlowLabel", "SPEED", (kStageL + 428) & comma & (tC + 3) & comma & (kStageL + 470) & comma & (tC + 21), empty, kDim)
    put Ed.Make("scrollbar", "Slow", (kStageL + 470) & comma & tC & comma & (kStageL + 640) & comma & (tC + 22)) into tB
    set the startValue of tB to 10
@@ -556,8 +591,7 @@ command Ed.BuildOtherCards
    set the backgroundColor of this card to kBg
    go card "Duel"
    set the backgroundColor of this card to kBg
-   put Ed.Label("DuelNote", "THE DUEL (step 6 of LIB_EMITTERS/PLAN.md): PROMPT and GLAZE throw powers at each other, a food fight with energy. Not built yet." & cr & cr & "Back to the editor: View menu > Editor, or press E.", "40,40,1160,200", empty, kText) into tF
-   set the textSize of tF to 14
+   Duel.Build
    go card "About"
    set the backgroundColor of this card to kBg
    put Ed.Label("AboutText", Ed.AboutText(), "40,30,1160,690", empty, kText) into tF
@@ -724,6 +758,12 @@ on Ed.Tick
          Ed.Frame tDT
       catch tErr
          Ed.Status "error in the frame:" && line 1 of tErr
+      end try
+   else if the short name of this card is "Duel" then
+      try
+         Duel.Frame tDT
+      catch tErr
+         set the text of field "Du_Info" to "error in the duel:" && line 1 of tErr
       end try
    end if
    -- frames a second
@@ -897,10 +937,7 @@ end Ed.Typing
 
 on keyDown pKey
    if Ed.Typing() then pass keyDown
-   if the short name of this card is not "Editor" then
-      if pKey is "e" then go card "Editor"
-      pass keyDown
-   end if
+   if the short name of this card is not "Editor" then pass keyDown
    switch pKey
       case space
          if sSpaceDown is not true then
@@ -946,17 +983,17 @@ on keyDown pKey
 end keyDown
 
 on returnKey
-   if Ed.Typing() then pass returnKey
+   if Ed.Typing() or the short name of this card is not "Editor" then pass returnKey
    Ed.ToggleLoop
 end returnKey
 
 on enterKey
-   if Ed.Typing() then pass enterKey
+   if Ed.Typing() or the short name of this card is not "Editor" then pass enterKey
    Ed.ToggleLoop
 end enterKey
 
 on tabKey
-   if Ed.Typing() then pass tabKey
+   if Ed.Typing() or the short name of this card is not "Editor" then pass tabKey
    set the itemDel to comma
    get itemOffset(sTab, kTabs)
    if it >= the number of items of kTabs then
@@ -970,6 +1007,11 @@ on escapeKey
    -- debounced: one press, one change
    if sEscMS is a number and the milliseconds - sEscMS < 300 then exit escapeKey
    put the milliseconds into sEscMS
+   if the short name of this card is "Duel" then
+      Duel.TogglePause
+      exit escapeKey
+   end if
+   if the short name of this card is not "Editor" then pass escapeKey
    put not (sPaused is true) into sPaused
    set the visible of field "PauseNote" to sPaused
    if sPaused then
@@ -1003,6 +1045,10 @@ end Ed.ToggleCmd
 on mouseUp pButton
    local tName, tKey
    put the short name of the target into tName
+   if the short name of this card is "Duel" then
+      Duel.Click tName
+      exit mouseUp
+   end if
    if the short name of this card is not "Editor" then pass mouseUp
    if tName begins with "Menu_" then
       Ed.Menu char 6 to -1 of tName
@@ -1041,6 +1087,9 @@ on mouseUp pButton
          break
       case "Btn_Fire"
          Ed.Fire empty, false
+         break
+      case "Btn_Duel"
+         go card "Duel"
          break
       case "Btn_Loop"
          Ed.ToggleLoop
