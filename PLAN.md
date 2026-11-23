@@ -34,7 +34,7 @@ Every power in the list is **an element doing a form**:
 | **Plasma** | | plasma ball | plasma beam | plasma wave | | | | | |
 | **Photon** | photon bit | | photon beam | | photon blast | | | | photon burst |
 
-The 18 named powers fill 18 squares. The empty squares are the "etc.": an editor that lets any
+The 17 named powers fill 17 squares. The empty squares are the "etc.": an editor that lets any
 element do any form gives **7 elements x 9 forms = 63 powers** from 16 recipes, and every one
 can then be tuned by hand. So the library is built as:
 
@@ -100,14 +100,14 @@ push by noise if asked, and project to the 2-D stage (plain or with a little per
 
 | Method | How it is made | Detail numbers | Vertices / edges (example) |
 |---|---|---|---|
-| `globe` | latitude rings x longitude meridians (the classic UV ball) | `rings` 2-24, `meridians` 3-48 | 8 x 12: 98 / 180 |
+| `globe` | latitude rings x longitude meridians (the classic UV ball) | `rings` 2-24, `meridians` 3-48 | 8 x 12: 98 / 204 |
 | `latitudes` | only the rings (a stack of hoops) | `rings` | 8 rings of 24: 192 / 192 |
 | `meridians` | only the meridians (a cage, a melon) | `meridians` | 12 x 16: 170 / 192 |
 | `icosphere` | icosahedron, each triangle split in 4, pushed out to the sphere | `subdivide` 0-3 | 0: 12/30, 1: 42/120, 2: 162/480, 3: 642/1920 |
 | `octasphere` | the same from an octahedron (rounder poles, square-ish feel) | `subdivide` 0-4 | 0: 6/12, 2: 66/192 |
 | `cubesphere` | a cube with N x N grid faces pushed out to the sphere | `grid` 1-12 | 4: 98/192 |
 | `platonic` | tetra, cube, octa, dodeca, icosa (the five solids, not rounded) | `solid` | 4/6 ... 20/30 |
-| `fibonacci` | N points spread evenly by the golden angle; dots, or each joined to its nearest K | `points` 8-600, `links` 0-6 | 100 points, K 3: about 100 / 150-300 |
+| `fibonacci` | N points spread evenly by the golden angle; dots, or each joined to its nearest K | `points` 8-600, `links` 0-6 | 100 points, K 3: 100 / 171 |
 | `spiral` | one line wound from pole to pole (a loxodrome): a ball of string | `turns` 2-40, `points` | 10 turns: 1 line of 200 points |
 | `gyro` | 2-8 great circles at different tilts (an atom, a gyroscope) | `hoops` 2-8 | 3 hoops of 32: 96 / 96 |
 | `scatter` | random points on the sphere (from the seed) joined to the nearest K: fuzzy, crackling | `points`, `links` | |
@@ -336,7 +336,7 @@ Where they live:
 
 | What | Where |
 |---|---|
-| shipped powers (the 18 + extras) | `LIB_EMITTERS/powers/<name>.power.txt` |
+| shipped powers (the 17) | `LIB_EMITTERS/powers/<name>.power.txt` |
 | element and form defaults | `LIB_EMITTERS/powers/elements.txt`, `forms.txt` |
 | the player's own powers | Data folder `Scripts/Emitters/Powers/` through LIB_DATA (rule 12); same name wins |
 
@@ -396,9 +396,9 @@ Three layers, so the math can be tested headless and ported to the engines later
 
 ## 9. The stick figures
 
-- Side view, 2-D. Bones from LIB_UNICODE's 웃 `Person.Pose` (stand / walk / run / wave), seen
-  from the side (the pose's z becomes the screen's x), so the figures match the rest of the
-  ARRAY.
+- Side view, 2-D. **Built (22 Nov) as its own small 2-D figure** (`Fig.*`: 9 angles a pose) rather
+  than LIB_UNICODE's 3-D 웃 `Person.Pose`: the casting poses needed their own angles anyway, and
+  it keeps the library free of other libraries. It can move to LIB_UNICODE later.
 - New poses the duel needs, made here as small changes to the arm and leg angles: **cast**
   (arm forward), **charge** (both hands together), **beam** (arms locked forward, knees bent),
   **recoil**, **dodge** (crouch), **jump**, **splatted** (sits down, legs out), **cheer**.
@@ -520,7 +520,7 @@ can be thrown at once; later a small foundation game in LIB_GAMES for PROMPT & G
 | Step | What | Size (my guess) | Can be tested without a LiveCode window? |
 |---|---|---|---|
 | 0 | this plan + LIB_POWERBAR plan | done | |
-| 1 | `lib_emitters`: math layer + power files + the 18 shipped powers | 1 session | yes, headless (math only) once LiveCode is free |
+| 1 | `lib_emitters`: math layer + power files + the 17 shipped powers | 1 session | yes, headless (math only) once LiveCode is free |
 | 2 | drawing pool + forms bit, ball, beam, wave + elements Fire, Photon, Lightning | 1 session | needs a window to judge the look |
 | 3 | the editor stack (cards, widgets, keys, save/load, budget line) | 1-2 sessions | needs a window |
 | 4 | remaining forms (blast, strike, chain, shock, burst), elements, afterburns, distortion of figures | 1 session | window |

@@ -24,7 +24,7 @@ flicker	0
 afterburn	dizzy
 sphere	gyro
 hoops	3
-glyph	◎
+glyph	∿
 
 [static]
 colorCore	#FFFFFF
