@@ -25,11 +25,16 @@ power, H shows the keys. Its About card says the rest.
 | `powers/*.power.txt` | the 17 shipped powers (the user's own go to Documents/Data/Emitters/Powers) |
 | `tests/run_tests.py` | tests without LiveCode: the library runs in xtalk_py's interpreter |
 
-## Status (22 Nov 2026)
+## Status (22 Nov 2026, night)
 
-- Library: 58 of 58 tests pass in xtalk_py (math, 12 sphere methods with textbook vertex/edge
-  counts, figures, power data and limits, all 17 powers fired at a target for 3 s).
-- Editor and drawing: **written, not yet compiled or seen in LiveCode** (LiveCode was busy).
-  First check: open the editor, read any compile error, fire each power once.
+- Seen working in OXT-Beyond 0.2.7: the editor (every power fired, worst frame 9 ms) and the
+  SPELL SPLAT duel (DUEL button; bots, rounds, banter; 29-46 fps).
+- Library tests: 59 of 59 in xtalk_py (`python3 -I tests/run_tests.py`).
+- Not yet tried by a person: playing PROMPT yourself in the duel. See `NEXT.md`.
+
+| More files | What |
+|---|---|
+| `livecode/lib_duel.livecodescript` | SPELL SPLAT: the duel on the Duel card |
+| `powers/duel_banter.txt` | the duel's lines (who, moment, line) |
 
 Licence: GPL-3.0.
