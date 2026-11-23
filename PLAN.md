@@ -87,6 +87,50 @@ photon burst. The power file names its `onHit` and `onEnd` follow-up power (sect
 
 ---
 
+## 3b. Vector balls: every way to make a sphere (owner, 22 Nov)
+
+The owner: balls come in "variant sizes and intensity and number of vertices and edges ...
+There's all kinds of spheres to make with math. Let the developer of games decide the
+complexity of their vector balls and method of wiring." So a ball's look is picked from a menu
+of **methods**, and every method has its own detail numbers. The editor shows the vertex and
+edge counts and the frame cost live, so the game's developer chooses how heavy a ball may be.
+
+All of them are made once as 3-D points + edges (unit size), then each frame: turn, scale,
+push by noise if asked, and project to the 2-D stage (plain or with a little perspective).
+
+| Method | How it is made | Detail numbers | Vertices / edges (example) |
+|---|---|---|---|
+| `globe` | latitude rings x longitude meridians (the classic UV ball) | `rings` 2-24, `meridians` 3-48 | 8 x 12: 98 / 180 |
+| `latitudes` | only the rings (a stack of hoops) | `rings` | 8 rings of 24: 192 / 192 |
+| `meridians` | only the meridians (a cage, a melon) | `meridians` | 12 x 16: 170 / 192 |
+| `icosphere` | icosahedron, each triangle split in 4, pushed out to the sphere | `subdivide` 0-3 | 0: 12/30, 1: 42/120, 2: 162/480, 3: 642/1920 |
+| `octasphere` | the same from an octahedron (rounder poles, square-ish feel) | `subdivide` 0-4 | 0: 6/12, 2: 66/192 |
+| `cubesphere` | a cube with N x N grid faces pushed out to the sphere | `grid` 1-12 | 4: 98/192 |
+| `platonic` | tetra, cube, octa, dodeca, icosa (the five solids, not rounded) | `solid` | 4/6 ... 20/30 |
+| `fibonacci` | N points spread evenly by the golden angle; dots, or each joined to its nearest K | `points` 8-600, `links` 0-6 | 100 points, K 3: about 100 / 150-300 |
+| `spiral` | one line wound from pole to pole (a loxodrome): a ball of string | `turns` 2-40, `points` | 10 turns: 1 line of 200 points |
+| `gyro` | 2-8 great circles at different tilts (an atom, a gyroscope) | `hoops` 2-8 | 3 hoops of 32: 96 / 96 |
+| `scatter` | random points on the sphere (from the seed) joined to the nearest K: fuzzy, crackling | `points`, `links` | |
+| `orb` | no 3-D at all: the flat P4 orb (circle + corona), the cheapest | | 1 circle + 1 polygon |
+
+How it is wired (any method):
+
+| Choice | Options |
+|---|---|
+| `wire` | edges, dots (at the vertices), both |
+| `backFace` | show (see-through), dim (back edges faint: reads as 3-D), hide (front only) |
+| `spin` x, y, z | degrees a second; `tilt` the starting tilt |
+| `wobble` | radius pushed by noise per vertex (plasma jelly, a fire ball's boil), with `jitterHz` |
+| `pulse` | the size breathes, 0-50% |
+| `perspective` | 0 flat ... 1 strong |
+| `edgeCap` | the most edges drawn a frame (from the frame budget; the rest are skipped evenly) |
+
+"Intensity" = the look numbers already in section 6 (core / glow widths, glow layers, flicker)
+plus the size (`radius`) and `pulse`. So a photon bit can be a tiny 12-vertex icosahedron spinning
+fast, and a plasma ball a wobbling 42-vertex icosphere with back edges dimmed.
+
+---
+
 ## 4. The building blocks (primitives)
 
 Every form above is drawn from these few pieces. They are the real library.
@@ -105,6 +149,7 @@ Every form above is drawn from these few pieces. They are the real library.
 | P10 | **Distortion field** | pushes OTHER lines' points: floor, background grid, stick figure bones | math only: a function that moves points near a source (`Emit.Displace`) |
 | P11 | **Flash** | the whole stage tinted for 1-3 frames | one card-sized rectangle, blendLevel |
 | P12 | **Shake** | the stage offset by a few pixels for a moment | offset added to every point before drawing |
+| P13 | **Vector sphere** | a 3-D wire ball, turned and seen from the side: many ways to build it (section 3b) | one line graphic for the front edges, one dimmer for the back, one for the dots |
 
 Every random choice comes from a **seed**, as in LIB_SFX: the same seed is the same bolt shape
 everywhere, so a power that looks good can be kept exactly.
@@ -153,6 +198,7 @@ seconds. "Hard" limits are clamped in the code so a mutate can never break the f
 | `glowFade` | blendLevel of the widest glow | 0 | 95 | 70 |
 | `flicker` | chance per frame a line vanishes for a frame | 0 | 0.9 | 0.1 |
 | `realGlow` | use LiveCode's outerGlow too (slow) | false | true | false |
+| `sphere` + its detail numbers | the ball method and wiring of section 3b (ball and orb forms) | | | `orb` |
 
 ### Shape
 
@@ -223,7 +269,14 @@ seconds. "Hard" limits are clamped in the code so a mutate can never break the f
 | `onHit` | follow-up power on a hit (e.g. `fire burst`) | | | empty |
 | `onEnd` | follow-up power when life runs out | | | empty |
 
-### Game (read by LIB_POWERBAR and the duel)
+### Game (read by LIB_POWERBAR and the duel): on EVERY effect, always on screen
+
+The owner (22 Nov): "every panel emitter effect should have a cost and cooldown property ...
+best for developers same UI." So these are not in a tab: the editor shows them in a strip
+above the tabs for whatever power is open, and **View > Cost table** shows every power in one
+list (name, element, form, cost, cooldown, castTime) where the numbers can be typed straight in.
+Follow-up powers (`onHit`, `onEnd`) keep their own cost and cooldown.
+
 
 | Name | Meaning | Min | Max | Default |
 |---|---|---|---|---|
@@ -430,6 +483,9 @@ top left 200,32 (fits the 1536 x 864 screen at scale 1).
 Space fire - Enter loop on/off - period one frame - M mutate - D new seed - 1..9 pick power -
 Tab next tab - A / B snapshots - Escape pause - backquote command line.
 
+Above the tabs, always showing: **COST [15]  COOLDOWN [1.0 s]  CAST [0.15 s]  GLYPH [ ]**.
+View > **Cost table**: every power in one editable list (see section 6, Game).
+
 ### Titles
 
 `Opus | energy_editor` while I drive it; `FOR OWNER | Space fires, 1-9 picks a power, H for
@@ -450,7 +506,7 @@ can be thrown at once; later a small foundation game in LIB_GAMES for PROMPT & G
 | Splat meter | 0-100; hits fill it by `splat`; at 100 that figure is **glazed** (covered in the element's mess) and loses the round. Best of three. Nobody is hurt, ever |
 | Mid-air | two projectiles that touch pop together into a mixed burst (both elements' dots) |
 | Beam clash | two beams that meet make a **struggle point**: tap the fire key to push it toward the other figure; whoever gets pushed to gets a soft blast and a splat |
-| Matchups (proposed, owner's call) | Pressure blows out Fire; Fire boils Plasma; Plasma swallows Photon; Photon outruns Lightning; Lightning grounds through Static; Static scrambles Pressure; Heat feeds Fire (a heat wave makes the next fire power bigger). Winner of a mid-air meeting keeps going at half size |
+| Matchups (optional switch, OFF by default) | Pressure blows out Fire; Fire boils Plasma; Plasma swallows Photon; Photon outruns Lightning; Lightning grounds through Static; Static scrambles Pressure; Heat feeds Fire (a heat wave makes the next fire power bigger). Winner of a mid-air meeting keeps going at half size |
 | Combos | a burst after a ball of the same element counts double; a chain that touches a radiant target jumps once more |
 | Banter | short lines on big moments, from a `banter.txt`, as in Vector Toss |
 | Bots | each side can be a bot (picks the power with the best matchup it can afford, dodges what it sees coming): bot vs bot is the first test |
@@ -485,12 +541,14 @@ the generated `vibe_engine_xt3d` script for this.
 
 ---
 
-## 13. Questions for the owner (defaults in brackets; I go on with the default if unanswered)
+## 13. The owner's answers (22 Nov)
 
-1. **Where it draws**: a plain 2-D card first, engines later? [yes, 2-D card]
-2. **File name**: the note says `energy_editor.livecoscript`; I read that as
-   `energy_editor.livecodescript`. [livecodescript]
-3. **"Vector Ball"**: the feel of Vector Toss / Photon Ball (casual, bouncy, cute), not a game
-   of that name? [yes, the feel]
-4. **Matchup wheel** in section 11: keep, change, or no matchups at all? [keep, tunable]
-5. **The duel's name**: Spell Splat is a placeholder.
+1. Plain LiveCode, 2-D card: "get the look right in straight livecode in both tools and
+   effect" (the editor and the duel).
+2. `energy_editor.livecodescript` (the note's spelling was a typo).
+3. Yes, the feel of Vector Toss / Photon Ball, and balls in every size, intensity, vertex and
+   edge count, by many sphere methods, the game developer choosing: section 3b.
+4. The matchup wheel was unclear, so it stays an optional switch, OFF by default. (It meant:
+   when two shots meet in mid-air, one element beats the other, like rock-paper-scissors.)
+5. Slot keys fire at once. Every effect has cost and cooldown, in the same window: the Game
+   strip and the Cost table (section 6).
