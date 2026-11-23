@@ -1,0 +1,7 @@
+power	1
+name	fire wave
+element	fire
+form	wave
+seed	530273643
+arc	50
+tongues	10

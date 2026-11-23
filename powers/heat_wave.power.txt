@@ -1,0 +1,10 @@
+power	1
+name	heat wave
+element	heat
+form	wave
+seed	508218587
+arc	40
+rings	2
+ringGap	40
+growth	180
+life	2

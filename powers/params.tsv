@@ -1,0 +1,87 @@
+# LIB_EMITTERS parameters: one line a number the editor shows. Tabs between columns.
+# key	tab	kind	min	max	default	label
+# kind: num, int, color, bool, text, list:a|b|c, power (a power name or none)
+# tab GAME is the strip that is always on screen (owner, 22 Nov: cost and cooldown on every effect)
+cost	GAME	int	0	100	15	COST
+cooldown	GAME	num	0	20	1	COOLDOWN s
+castTime	GAME	num	0	2	0.15	CAST s
+glyph	GAME	text			*	GLYPH
+colorCore	LOOK	color			#FFFFFF	core colour
+colorGlow	LOOK	color			#40E0FF	glow colour
+colorEdge	LOOK	color			#FFD040	edge colour
+coreWidth	LOOK	int	1	12	2	core width
+glowWidth	LOOK	int	0	40	10	glow width
+glowLayers	LOOK	int	0	2	2	glow layers
+glowFade	LOOK	int	0	95	70	glow fade %
+fillFade	LOOK	int	0	95	30	fill fade %
+flicker	LOOK	num	0	0.9	0.1	flicker
+realGlow	LOOK	bool			false	real glow (slow)
+segments	SHAPE	int	2	128	16	segments
+jitter	SHAPE	num	0	60	8	jitter px
+jitterHz	SHAPE	num	0	30	12	jitter /s
+smooth	SHAPE	num	0	1	0	smooth
+branchChance	SHAPE	num	0	0.6	0.15	branch chance
+branchDepth	SHAPE	int	0	3	1	branch depth
+radius	SHAPE	num	1	200	12	radius px
+growth	SHAPE	num	0	800	200	growth px/s
+rings	SHAPE	int	1	6	1	rings
+ringGap	SHAPE	num	0	120	30	ring gap px
+arc	SHAPE	num	10	360	360	arc degrees
+rays	SHAPE	int	1	48	12	rays
+cone	SHAPE	num	5	180	40	cone degrees
+tongues	SHAPE	int	0	24	0	flame tongues
+tongueLen	SHAPE	num	2	120	24	tongue length
+sphere	BALL	list:orb|globe|latitudes|meridians|icosphere|octasphere|cubesphere|platonic|fibonacci|spiral|gyro|scatter			orb	sphere method
+sRings	BALL	int	2	24	8	rings (globe)
+sMeridians	BALL	int	3	48	12	meridians
+subdivide	BALL	int	0	3	1	subdivide
+grid	BALL	int	1	12	4	cube grid
+solid	BALL	list:tetra|cube|octa|dodeca|icosa			icosa	solid
+points	BALL	int	8	600	100	points
+links	BALL	int	0	6	3	links
+turns	BALL	int	2	40	10	spiral turns
+hoops	BALL	int	2	8	3	gyro hoops
+wire	BALL	list:edges|dots|both			edges	wiring
+backFace	BALL	list:show|dim|hide			dim	back edges
+spinX	BALL	num	-720	720	0	spin x deg/s
+spinY	BALL	num	-720	720	90	spin y deg/s
+spinZ	BALL	num	-720	720	0	spin z deg/s
+tilt	BALL	num	-90	90	20	tilt deg
+wobble	BALL	num	0	1	0	wobble
+pulse	BALL	num	0	0.5	0	pulse
+perspective	BALL	num	0	1	0.3	perspective
+edgeCap	BALL	int	12	2000	400	most edges
+speed	MOTION	num	0	2000	500	speed px/s
+gravity	MOTION	num	-1000	1000	0	gravity
+homing	MOTION	num	0	1	0	homing
+wander	MOTION	num	0	1	0	wander
+life	MOTION	num	0.05	6	1.5	life s
+trail	MOTION	int	0	40	8	trail
+charge	MOTION	num	0	3	0	charge s
+jumps	MOTION	int	0	8	3	chain jumps
+jumpDelay	MOTION	num	0	0.5	0.08	jump delay s
+reach	MOTION	num	0	400	160	reach px
+rate	DOTS	num	0	600	60	dots /s
+burstDots	DOTS	int	0	400	40	burst dots
+dotLife	DOTS	num	0.05	4	0.6	dot life s
+dotSize	DOTS	int	1	8	2	dot size
+dotSpeed	DOTS	num	0	800	120	dot speed
+dotSpread	DOTS	num	0	360	360	dot spread deg
+dotGravity	DOTS	num	-600	600	0	dot gravity
+dotDrag	DOTS	num	0	1	0.3	dot drag
+distort	BEND	num	0	30	0	bend px
+distortReach	BEND	num	0	300	80	bend reach px
+distortWave	BEND	num	0	1	0	wavy
+bendFloor	BEND	bool			true	bend floor
+bendGrid	BEND	bool			true	bend grid
+bendFigures	BEND	bool			true	bend figures
+splat	HIT	num	0	50	10	splat
+knockback	HIT	num	0	800	150	knockback
+shake	HIT	num	0	20	2	shake px
+flash	HIT	num	0	1	0	flash
+colorFlash	HIT	color			#FFFFFF	flash colour
+afterburn	HIT	list:none|dizzy|frizz|stun|sweat|engulfed|goo|radiant			none	afterburn
+afterburnTime	HIT	num	0	8	2	afterburn s
+onHit	HIT	power			none	on hit
+onEnd	HIT	power			none	on end
+seed	SEED	int	1	2147483646	1	seed

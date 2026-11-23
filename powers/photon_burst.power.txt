@@ -1,0 +1,9 @@
+power	1
+name	photon burst
+element	photon
+form	burst
+seed	1457072887
+rays	32
+flash	0.6
+afterburnTime	3
+splat	20

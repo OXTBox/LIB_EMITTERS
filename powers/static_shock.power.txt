@@ -1,0 +1,5 @@
+power	1
+name	static shock
+element	static
+form	shock
+seed	270395402

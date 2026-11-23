@@ -1,0 +1,6 @@
+power	1
+name	photon beam
+element	photon
+form	beam
+seed	1648524009
+glowWidth	14

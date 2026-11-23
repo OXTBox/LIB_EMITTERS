@@ -1,0 +1,11 @@
+power	1
+name	ball lightning
+element	lightning
+form	ball
+seed	820421889
+wander	0.8
+speed	160
+life	5
+homing	0.6
+radius	20
+charge	0

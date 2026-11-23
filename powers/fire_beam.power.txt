@@ -1,0 +1,6 @@
+power	1
+name	fire beam
+element	fire
+form	beam
+seed	1947031232
+tongues	5

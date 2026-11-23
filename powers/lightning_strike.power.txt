@@ -1,0 +1,5 @@
+power	1
+name	lightning strike
+element	lightning
+form	strike
+seed	1314852651

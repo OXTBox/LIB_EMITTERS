@@ -1,0 +1,8 @@
+power	1
+name	fire ball
+element	fire
+form	ball
+seed	833466555
+gravity	300
+onHit	fire burst
+onEnd	fire burst
