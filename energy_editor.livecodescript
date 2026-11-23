@@ -61,7 +61,7 @@ on preOpenStack
    Emit.LoadAll sUserFolder
    if sBuilt is not true then Ed.Build
    put true into sBuilt
-   go card "Editor" of me
+   go card "Editor"
 end preOpenStack
 
 on closeStackRequest
@@ -224,11 +224,11 @@ command Ed.Build
    local tC, tB, tF, tG, tX, i, tName
    lock screen
    lock messages
-   set the name of card 1 of me to "Developer"
+   set the name of card 1 to "Developer"
    create card "Editor"
    create card "Duel"
    create card "About"
-   go card "Editor" of me
+   go card "Editor"
    set the backgroundColor of this card to kBg
    -- menu bar: green titles (graphics) + one popup button for every menu
    put Ed.Make("graphic", "MenuBar", 0 & comma & 0 & comma & kW & comma & 24) into tG
@@ -330,7 +330,7 @@ command Ed.Build
    set the textAlign of tF to "center"
    set the visible of tF to false
    Ed.BuildOtherCards
-   go card "Editor" of me
+   go card "Editor"
    unlock messages
    -- the effects pool sits in the stage group, over the figures
    Draw.Begin "Stage"
@@ -547,13 +547,13 @@ end Ed.BuildRow
 
 command Ed.BuildOtherCards
    local tF
-   go card "Developer" of me
+   go card "Developer"
    set the backgroundColor of this card to kBg
-   go card "Duel" of me
+   go card "Duel"
    set the backgroundColor of this card to kBg
    put Ed.Label("DuelNote", "THE DUEL (step 6 of LIB_EMITTERS/PLAN.md): PROMPT and GLAZE throw powers at each other, a food fight with energy. Not built yet." & cr & cr & "Back to the editor: View menu > Editor, or press E.", "40,40,1160,200", empty, kText) into tF
    set the textSize of tF to 14
-   go card "About" of me
+   go card "About"
    set the backgroundColor of this card to kBg
    put Ed.Label("AboutText", Ed.AboutText(), "40,30,1160,690", empty, kText) into tF
    set the textSize of tF to 13
@@ -893,7 +893,7 @@ end Ed.Typing
 on keyDown pKey
    if Ed.Typing() then pass keyDown
    if the short name of this card is not "Editor" then
-      if pKey is "e" then go card "Editor" of me
+      if pKey is "e" then go card "Editor"
       pass keyDown
    end if
    switch pKey
@@ -1338,13 +1338,13 @@ command Ed.Picked pFor, pItem
                Ed.Picked "dummy", "jump"
                break
             case "Editor"
-               go card "Editor" of me
+               go card "Editor"
                break
             case "Duel"
-               go card "Duel" of me
+               go card "Duel"
                break
             case "About"
-               go card "About" of me
+               go card "About"
                break
          end switch
          break
@@ -1353,7 +1353,7 @@ command Ed.Picked pFor, pItem
             put true into sHelpOn
             set the visible of field "Help" to true
          else
-            go card "About" of me
+            go card "About"
          end if
          break
       default
