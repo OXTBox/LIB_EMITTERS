@@ -199,8 +199,9 @@ function Emit.Wobble pX1, pY1, pX2, pY2, pSegs, pAmp, pTime, pSeed
 end Emit.Wobble
 
 -- a ring (pFrom..pTo degrees; 360 apart = closed) whose radius is pushed by noise
-function Emit.Ring pCX, pCY, pR, pSegs, pFrom, pTo, pAmp, pTime, pSeed
+function Emit.Ring pCX, pCY, pR, pSegs, pFrom, pTo, pAmp, pTime, pSeed, pFreq
    local i, tA, tRR, tOut, tClosed, tN, tFirst
+   if pFreq is not a number then put 0.6 into pFreq
    if pSegs < 3 then put 3 into pSegs
    put (pTo - pFrom >= 360) into tClosed
    if tClosed then
@@ -210,7 +211,7 @@ function Emit.Ring pCX, pCY, pR, pSegs, pFrom, pTo, pAmp, pTime, pSeed
    end if
    repeat with i = 0 to tN
       put (pFrom + (pTo - pFrom) * i / pSegs) * kDeg into tA
-      put pR + pAmp * Emit.Noise(i * 0.6 + pTime, pSeed) into tRR
+      put pR + pAmp * Emit.Noise(i * pFreq + pTime, pSeed) into tRR
       if tRR < 0 then put 0 into tRR
       put round(pCX + cos(tA) * tRR) & comma & round(pCY + sin(tA) * tRR) & cr after tOut
    end repeat
@@ -1098,6 +1099,7 @@ end emitRead
 -- load the table, the defaults and every power of LIB_EMITTERS/powers, then pUserFolder's
 command Emit.LoadAll pUserFolder
    local tDir
+   if sSegScale is not a number then Emit.Reset
    put Emit.Folder() & "/powers" into tDir
    Emit.LoadTable emitRead(tDir & "/params.tsv")
    Emit.LoadDefaults "element", emitRead(tDir & "/elements.txt")
@@ -1336,6 +1338,8 @@ end Emit.Hits
 -- effects, dots, segments, ms of the last step and draw
 function Emit.Counts
    local tK, tN
+   if sDotCount is not a number then put 0 into sDotCount
+   if sSegCount is not a number then put 0 into sSegCount
    put 0 into tN
    repeat for each key tK in sFx
       add 1 to tN
@@ -1580,6 +1584,7 @@ private function emitFade pF
 end emitFade
 
 private function emitSegs pN
+   if sSegScale is not a number then put 1 into sSegScale
    return max(2, round(pN * sSegScale))
 end emitSegs
 
@@ -1806,7 +1811,7 @@ private command emitStepWave pId, pDT
    repeat with k = 1 to tP["rings"]
       put tR - (k - 1) * tP["ringGap"] into tRK
       if tRK <= 2 then next repeat
-      put Emit.Ring(tCX, tCY, tRK, emitSegs(max(tP["segments"], round(tP["arc"] / 6))), tA0, tA1, tP["jitter"], tF["age"] * tP["jitterHz"], tP["seed"] + k) into tPts
+      put Emit.Ring(tCX, tCY, tRK, emitSegs(max(tP["segments"], round(tP["arc"] / 6))), tA0, tA1, tP["jitter"], tF["age"] * tP["jitterHz"], tP["seed"] + k, 0.6 * (1 - 0.85 * tP["smooth"])) into tPts
       if k = 1 then
          put Emit.Join(tF["g"]["core"], tPts) into tF["g"]["core"]
       else

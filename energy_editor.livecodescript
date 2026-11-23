@@ -62,6 +62,8 @@ on preOpenStack
    if sBuilt is not true then Ed.Build
    put true into sBuilt
    go card "Editor"
+   -- openCard may come with messages locked (opened from a script): start the frames anyway
+   send "Ed.StartTick" to me in 50 milliseconds
 end preOpenStack
 
 on closeStackRequest
@@ -144,7 +146,7 @@ command Ed.Template pType
          set the foregroundColor of the templateField to kText
          set the textColor of the templateField to kText
          set the textSize of the templateField to 11
-         set the margins of the templateField to 2
+         set the margins of the templateField to "4,3,2,0"
          set the traversalOn of the templateField to true
          break
       case "graphic"
@@ -208,6 +210,8 @@ function Ed.Label pName, pText, pRect, pGroup, pColor
    set the opaque of tF to false
    set the showBorder of tF to false
    set the traversalOn of tF to false
+   set the margins of tF to "2,3,2,0"
+   set the bottom of tF to the bottom of tF + 4
    if pColor is not empty then set the textColor of tF to pColor
    set the text of tF to pText
    return tF
@@ -300,8 +304,8 @@ command Ed.Build
    set the textAlign of tF to "right"
    -- the cost table: every power's cost, cooldown and cast time, typed straight in
    add 28 to tC
-   put Ed.Label("CostHead", "COST TABLE (type numbers, then click away)" & tab & tab & "cost" & tab & "cooldown" & tab & "cast", kStageL & comma & tC & comma & (kStageL + kStageW) & comma & (tC + 18), empty, kAccent) into tF
-   set the tabStops of tF to "300,370,450"
+   put Ed.Label("CostHead", "COST TABLE" & tab & "element" & tab & "form" & tab & "cost" & tab & "cooldown" & tab & "cast   (type a number, click away)", kStageL & comma & tC & comma & (kStageL + kStageW) & comma & (tC + 18), empty, kAccent) into tF
+   set the tabStops of tF to "150,230,300,370,450"
    put Ed.Make("field", "CostTable", kStageL & comma & (tC + 18) & comma & (kStageL + kStageW) & comma & 640) into tF
    set the tabStops of tF to "150,230,300,370,450"
    set the vScrollbar of tF to true
@@ -437,12 +441,13 @@ command Ed.BuildStage
    Emit.SetStage kStageL, kStageT, kStageL + kStageW, kStageT + kStageH, sFloorY
 end Ed.BuildStage
 
--- posts stand behind the dummy (chain lightning jumps along them)
+-- posts stand behind the dummy (chain lightning jumps along them); never between the two
+-- figures, or every low shot would hit a post first
 command Ed.PlacePosts
-   local i, tX, tTop
+   local i, tX, tTop, tGap
+   put max(14, min(50, (kStageL + kStageW - 16 - sDummyHome) / 3)) into tGap
    repeat with i = 1 to 3
-      put min(kStageL + kStageW - 20, sDummyHome + 50 * i) into tX
-      if i = 3 then put max(kStageL + 20, sCasterX + (sDummyHome - sCasterX) * 0.5) into tX
+      put min(kStageL + kStageW - 12, sDummyHome + tGap * i) into tX
       put sFloorY - 50 - i * 6 into tTop
       set the points of graphic ("Post" & i) to tX & comma & sFloorY & cr & tX & comma & tTop & cr & tX - 6 & comma & tTop & cr & tX + 6 & comma & tTop
       Emit.SetTarget "post" & i, tX, tTop, 12, tX & comma & tTop
@@ -851,10 +856,10 @@ end Ed.Frame
 command Ed.ShowBudget
    local tC, tText, tSize
    put Emit.Counts() into tC
-   put "effects" && item 1 of tC & "   dots" && item 2 of tC & "   lines" && item 3 of tC & "   ms" && item 4 of tC & "   fps" && sFps into tText
+   put "fx" && item 1 of tC & "  dots" && item 2 of tC & "  lines" && item 3 of tC & "  ms" && item 4 of tC & "  fps" && sFps into tText
    if Power.Get(sPower, "form") is among the items of "ball,bit" and Power.Get(sPower, "sphere") is not "orb" then
       put Emit.ModelSize(sPower) into tSize
-      put "   ball" && item 1 of tSize && "vertices," && item 2 of tSize && "edges" after tText
+      put "  ball" && item 1 of tSize & "v" && item 2 of tSize & "e" after tText
    end if
    set the text of field "Budget" to tText
    if item 4 of tC > 15 or item 3 of tC > 300 then
