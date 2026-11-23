@@ -1,0 +1,8 @@
+power	1
+name	fire burst
+element	fire
+form	burst
+seed	1157139595
+tongues	12
+afterburnTime	3
+splat	20

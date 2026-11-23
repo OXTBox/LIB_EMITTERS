@@ -1,0 +1,5 @@
+power	1
+name	sound wave
+element	pressure
+form	wave
+seed	1811128332

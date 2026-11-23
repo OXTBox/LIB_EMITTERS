@@ -1,0 +1,6 @@
+power	1
+name	plasma beam
+element	plasma
+form	beam
+seed	1332194284
+jitter	18

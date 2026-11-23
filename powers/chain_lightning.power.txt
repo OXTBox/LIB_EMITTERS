@@ -1,0 +1,5 @@
+power	1
+name	chain lightning
+element	lightning
+form	chain
+seed	2000020721

@@ -1,0 +1,8 @@
+power	1
+name	plasma wave
+element	plasma
+form	wave
+seed	619817023
+rings	2
+ringGap	34
+jitter	16

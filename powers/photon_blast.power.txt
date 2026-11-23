@@ -1,0 +1,5 @@
+power	1
+name	photon blast
+element	photon
+form	blast
+seed	1705521099

@@ -1,0 +1,58 @@
+# LIB_EMITTERS forms: the SHAPE and MOTION of a power. An element's value wins over these.
+
+[bit]
+speed	900
+life	2
+trail	10
+radius	5
+burstDots	20
+
+[ball]
+speed	380
+life	3
+radius	18
+trail	6
+burstDots	40
+charge	1
+
+[beam]
+speed	0
+life	1.2
+segments	24
+cost	25
+
+[wave]
+speed	0
+growth	260
+life	1.4
+arc	70
+radius	10
+
+[blast]
+life	0.35
+rays	14
+cone	40
+reach	300
+burstDots	60
+
+[strike]
+life	0.35
+segments	32
+
+[chain]
+life	0.7
+jumps	3
+reach	240
+segments	16
+
+[shock]
+life	0.4
+reach	90
+segments	6
+
+[burst]
+life	0.6
+rays	20
+radius	10
+growth	300
+burstDots	80

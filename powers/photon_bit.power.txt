@@ -1,0 +1,10 @@
+power	1
+name	photon bit
+element	photon
+form	bit
+seed	872556902
+speed	1400
+sphere	platonic
+solid	octa
+radius	6
+spinY	720

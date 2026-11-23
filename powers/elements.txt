@@ -1,0 +1,163 @@
+# LIB_EMITTERS elements: the LOOK of a power. [name] then key <tab> value. A power's own value wins.
+
+[pressure]
+colorCore	#E8F0FF
+colorGlow	#8090B0
+colorEdge	#C8C0B0
+coreWidth	3
+glowWidth	8
+glowLayers	1
+glowFade	80
+smooth	1
+jitter	3
+jitterHz	4
+segments	48
+rings	4
+ringGap	26
+distort	14
+distortReach	90
+distortWave	0
+rate	30
+dotSpeed	160
+dotLife	0.5
+flicker	0
+afterburn	dizzy
+sphere	gyro
+hoops	3
+glyph	∿
+
+[static]
+colorCore	#FFFFFF
+colorGlow	#60A0FF
+colorEdge	#D0E8FF
+coreWidth	1
+glowWidth	5
+glowLayers	1
+jitter	6
+jitterHz	30
+segments	6
+smooth	0
+flicker	0.4
+branchChance	0.1
+rate	80
+dotLife	0.15
+dotSpeed	300
+dotSize	1
+afterburn	frizz
+sphere	scatter
+points	40
+links	2
+glyph	⌇
+
+[lightning]
+colorCore	#FFFFFF
+colorGlow	#5080FF
+colorEdge	#C0D8FF
+coreWidth	2
+glowWidth	14
+glowLayers	2
+jitter	30
+jitterHz	20
+segments	32
+smooth	0
+branchChance	0.25
+branchDepth	2
+flicker	0.15
+flash	0.5
+shake	5
+colorFlash	#C0D0FF
+afterburn	stun
+sphere	scatter
+points	60
+links	2
+glyph	↯
+
+[heat]
+colorCore	#FFB060
+colorGlow	#FF6020
+colorEdge	#FFD0A0
+coreWidth	1
+glowWidth	20
+glowLayers	1
+glowFade	88
+smooth	1
+jitter	10
+jitterHz	6
+segments	48
+distort	10
+distortWave	1
+distortReach	120
+rate	10
+dotGravity	-60
+dotLife	1.2
+afterburn	sweat
+sphere	latitudes
+glyph	≋
+
+[fire]
+colorCore	#FFF0A0
+colorGlow	#FF5010
+colorEdge	#FF9020
+coreWidth	3
+glowWidth	16
+glowLayers	2
+smooth	1
+jitter	6
+jitterHz	10
+tongues	8
+tongueLen	26
+rate	90
+dotGravity	-160
+dotLife	0.9
+dotSpeed	60
+distort	3
+distortWave	1
+afterburn	engulfed
+sphere	icosphere
+subdivide	1
+wobble	0.25
+glyph	♨
+
+[plasma]
+colorCore	#FFC0FF
+colorGlow	#C020FF
+colorEdge	#FF60E0
+coreWidth	4
+glowWidth	22
+glowLayers	2
+smooth	1
+jitter	12
+jitterHz	3
+rate	40
+dotGravity	300
+dotLife	1
+dotSize	3
+distort	5
+distortReach	60
+afterburn	goo
+sphere	icosphere
+subdivide	1
+wobble	0.35
+glyph	⊛
+
+[photon]
+colorCore	#FFFFFF
+colorGlow	#FFE040
+colorEdge	#FFFFC0
+coreWidth	2
+glowWidth	10
+glowLayers	2
+smooth	1
+jitter	0
+jitterHz	0
+flicker	0
+rate	50
+dotSpeed	400
+dotLife	0.3
+dotSize	2
+dotSpread	20
+afterburn	radiant
+sphere	platonic
+solid	icosa
+spinY	240
+glyph	✺

@@ -1,0 +1,7 @@
+power	1
+name	plasma ball
+element	plasma
+form	ball
+seed	180833775
+speed	260
+radius	22
