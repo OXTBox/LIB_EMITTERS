@@ -32,7 +32,7 @@ local sElem, sForm, sPow, sFolder
 local sFx, sNextId, sTargets, sBones, sHits, sStage, sFloorY
 local sShake, sFlash, sFlashColor, sDotCount, sSegCount, sSegScale, sLastMS, sModels
 -- drawing
-local sG, sSlotOf, sSlotStyled, sFlashG, sGroup
+local sG, sSlotOf, sSlotStyled, sFlashG, sGroup, sGlowOn
 
 -------------------------------------------------------------------- MATH: random and noise
 
@@ -583,7 +583,7 @@ end sphCube
 -- N points spread by the golden angle; each joined to its nearest K (the nearest ones sit a
 -- Fibonacci number of steps away, so only those are tried)
 private command sphFibonacci @pM, pN, pK
-   local i, tY, tR, tA, j, tCand, tD, tO, tL, tC
+   local i, tY, tR, tA, j, tCand, tD, tStep, tL, tC
    if pN < 4 then put 4 into pN
    repeat with i = 0 to pN - 1
       put 1 - 2 * (i + 0.5) / pN into tY
@@ -594,8 +594,8 @@ private command sphFibonacci @pM, pN, pK
    if pK < 1 then exit sphFibonacci
    repeat with i = 1 to pN
       put empty into tCand
-      repeat for each item tO in "1,2,3,5,8,13,21,34,55,89,144,233"
-         repeat for each item tC in (i - tO) & comma & (i + tO)
+      repeat for each item tStep in "1,2,3,5,8,13,21,34,55,89,144,233"
+         repeat for each item tC in (i - tStep) & comma & (i + tStep)
             if tC < 1 or tC > pN then next repeat
             put (pM["x"][i] - pM["x"][tC]) ^ 2 + (pM["y"][i] - pM["y"][tC]) ^ 2 + (pM["z"][i] - pM["z"][tC]) ^ 2 into tD
             put tD & comma & tC & cr after tCand
@@ -2290,13 +2290,16 @@ private command drawStyle pSlot, pP, pForm
    set the foregroundColor of tG to tCore
    set the lineSize of tG to pP["coreWidth"]
    set the blendLevel of tG to 0
+   -- LiveCode's own glow only when asked (it is slow); off only where it was turned on
    if pP["realGlow"] is true then
       set the outerGlow["color"] of tG to tGlow
       set the outerGlow["size"] of tG to max(4, pP["glowWidth"])
       set the outerGlow["blendMode"] of tG to "normal"
       set the outerGlow["opacity"] of tG to 200
-   else
+      put true into sGlowOn[pSlot]
+   else if sGlowOn[pSlot] is true then
       set the outerGlow["opacity"] of tG to 0
+      put false into sGlowOn[pSlot]
    end if
    put sG[pSlot]["dots"] into tG
    put pP["dotSize"] into tS
