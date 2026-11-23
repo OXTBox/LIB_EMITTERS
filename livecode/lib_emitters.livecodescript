@@ -123,7 +123,7 @@ function Emit.Jag pX1, pY1, pX2, pY2, pSegs, pJitter, pSeed, pBranch, pDepth
 end Emit.Jag
 
 private function emitJagLine pX1, pY1, pX2, pY2, pSegs, pJitter, pBranch, pDepth
-   local tX, tY, tN, tAmp, tNX, tNY, tM, i, tDX, tDY, tLen, tOff, tOut, tAng, tL, tEX, tEY, tSub
+   local tX, tY, tN, tAmp, tNX, tNY, tM, i, tDX, tDY, tLen, tOff, tOut, tAng, tL, tEX, tEY, tSub, tBranch
    if pSegs < 1 then put 1 into pSegs
    put pX1 into tX[1]
    put pY1 into tY[1]
@@ -172,7 +172,10 @@ private function emitJagLine pX1, pY1, pX2, pY2, pSegs, pJitter, pBranch, pDepth
             put tAng + (Emit.Rnd() * 2 - 1) * 0.9 into tSub
             put tX[i] + cos(tSub) * tL into tEX
             put tY[i] + sin(tSub) * tL into tEY
-            put Emit.Join(tOut, emitJagLine(tX[i], tY[i], tEX, tEY, max(2, pSegs div 3), pJitter * 0.5, pBranch * 0.6, pDepth - 1)) into tOut
+            -- the branch into its own variable first: called inside Emit.Join's brackets, a
+            -- two-deep recursion lost the main bolt on OXT-Beyond's engine
+            put emitJagLine(tX[i], tY[i], tEX, tEY, max(2, pSegs div 3), pJitter * 0.5, pBranch * 0.6, pDepth - 1) into tBranch
+            put Emit.Join(tOut, tBranch) into tOut
          end if
       end repeat
    end if
